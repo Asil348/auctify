@@ -1,5 +1,20 @@
 import { db } from "~/server/db.server";
 
+interface IListing {
+  title: string;
+  slug: string;
+  description: string;
+  openingBid: number;
+  currentBid: number;
+  incrementBid: number;
+  instantBuyPrice: number;
+  media: any; // !! change this !! //
+  startsAt: Date;
+  endsAt: Date;
+  soldTo: null | string;
+  soldAt: null | Date;
+}
+
 interface IGetListing {
   request: any;
   id: string;
@@ -27,15 +42,14 @@ export async function getListing({ request, id }: IGetListing) {
   }
 }
 
-export async function createListing({ request, listing }: any) {
-  const { title, slug, description, price } = listing;
-
-  const res = await db.collection("listings").add({
-    title,
-    slug,
-    description,
-    price,
-  });
+export async function createListing({
+  request,
+  listing,
+}: {
+  request: any;
+  listing: IListing;
+}) {
+  const res = await db.collection("listings").add(listing);
 
   return getListing({ request, id: res.id });
 }
