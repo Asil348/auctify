@@ -20,6 +20,8 @@ export default function Index() {
       <Link to="/signin">Sign in</Link>
       <br />
       <Link to="/signout">Sign out</Link>
+      <br />
+      <Link to="/signup">Sign up</Link>
     </div>
   );
 }

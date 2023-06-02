@@ -4,7 +4,7 @@ import { Form } from "@remix-run/react";
 import {
   createUserSession,
   getUserToken,
-  signIn,
+  signUp,
 } from "~/utils/session.server";
 
 import type { LoaderArgs } from "@remix-run/node";
@@ -31,11 +31,9 @@ export async function action({ request }: ActionArgs) {
     });
   }
 
-  const user = await signIn(request, email.toString(), password.toString());
+  const user = await signUp(request, email.toString(), password.toString());
 
   // If no user is returned, return the error
-
-  if (!user) return new Response("Invalid email or password", { status: 401 });
 
   return createUserSession({
     request,
@@ -43,7 +41,7 @@ export async function action({ request }: ActionArgs) {
   });
 }
 
-export default function SignIn() {
+export default function SignUp() {
   return (
     <Form method="post">
       <label htmlFor="email">Email address</label>

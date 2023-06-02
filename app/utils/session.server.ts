@@ -1,5 +1,5 @@
 import { createCookieSessionStorage, redirect } from "@remix-run/node";
-import { getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
 
 const sessionStorage = createCookieSessionStorage({
   cookie: {
@@ -62,6 +62,16 @@ export async function signIn(
   password: string
 ) {
   const { user } = await signInWithEmailAndPassword(getAuth(), email, password);
+
+  return user;
+}
+
+export async function signUp(
+  request: Request,
+  email: string,
+  password: string
+) {
+  const { user } = await createUserWithEmailAndPassword(getAuth(), email, password);
 
   return user;
 }
