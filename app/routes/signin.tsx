@@ -4,7 +4,6 @@ import { redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
 import { createUserSession, getUserToken } from "~/server/session.server";
 import { getUser, signIn } from "~/server/auth.server";
-import type { User } from "firebase/auth";
 
 export async function loader({ request }: LoaderArgs) {
   // if there's a user token in the cookies, the user is already signed in
@@ -31,7 +30,7 @@ export async function action({ request }: ActionArgs) {
     });
   }
 
-  let user: User;
+  let user;
 
   return await signIn(request, email.toString(), password.toString())
     .then(async (res) => {
@@ -79,12 +78,7 @@ export default function SignIn() {
         autoComplete="current-password"
       />
 
-      {error &&
-        (error.status != 401 ? (
-          <p style={{ color: "red" }}>{error}</p>
-        ) : (
-          <p>An unexpected error occured.</p>
-        ))}
+      {error && <p style={{ color: "red" }}>{error}</p>}
 
       <button type="submit">Log in</button>
     </Form>
