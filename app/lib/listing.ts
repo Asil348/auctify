@@ -39,3 +39,22 @@ export async function createListing({ request, listing }: any) {
 
   return getListing({ request, id: res.id });
 }
+
+export async function editListing({ request, listing }: any) {
+  const { title, slug, description, price, id } = listing;
+
+  await db.collection("listings").doc(id).update({
+    title,
+    slug,
+    description,
+    price,
+  });
+
+  return getListing({ request, id });
+}
+
+export async function deleteListing({ request, id }: any) {
+  await db.collection("listings").doc(id).delete();
+
+  return { id };
+}
