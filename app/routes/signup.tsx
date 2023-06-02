@@ -1,6 +1,6 @@
 import type { ActionArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
-import { Form } from "@remix-run/react";
+import { Form, useActionData } from "@remix-run/react";
 import { createUserSession, getUserToken } from "~/server/session.server";
 
 import type { LoaderArgs } from "@remix-run/node";
@@ -28,17 +28,21 @@ export async function action({ request }: ActionArgs) {
     });
   }
 
-  const user = await signUp(request, email.toString(), password.toString());
-
-  // If no user is returned, return the error
-
-  return createUserSession({
-    request,
-    userToken: await user.getIdToken(),
-  });
+  // !! THIS IS BAD PRACTICE, SEE 'signUp() @ auth.server.ts' !! //
+  try {
+    const user = await signUp(request, email.toString(), password.toString());
+    return createUserSession({
+      request,
+      userToken: await user.getIdToken(),
+    });
+  } catch (err: any) {
+    return new Response(err.code, { status: 500 });
+  }
 }
 
 export default function SignUp() {
+  const error = useActionData();
+
   return (
     <Form method="post">
       <label htmlFor="email">Email address</label>
@@ -57,6 +61,8 @@ export default function SignUp() {
         type="password"
         autoComplete="current-password"
       />
+
+      {error && <p style={{ color: "red" }}>{error}</p>}
 
       <button type="submit">Sign up</button>
     </Form>

@@ -54,6 +54,14 @@ export async function signIn(
   return res;
 }
 
+// !! NOTE TO FUTURE SELF !! //
+// dear asil,
+// this is a bad way to do this, because we cant pass the response to the client
+// hence, we can't properly handle errors
+// you should make it so that this function returns a promise, not a response
+// i'm leaving this as is because if i try to fix it, ill waste a whole bunch of time
+// please fix when able
+// love, asil
 export async function signUp(
   request: Request,
   email: string,
