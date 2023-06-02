@@ -49,9 +49,9 @@ export async function signIn(
   email: string,
   password: string
 ) {
-  const { user } = await signInWithEmailAndPassword(getAuth(), email, password);
+  const res = await signInWithEmailAndPassword(getAuth(), email, password);
 
-  return user;
+  return res;
 }
 
 export async function signUp(

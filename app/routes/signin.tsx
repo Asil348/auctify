@@ -1,15 +1,18 @@
 import type { ActionArgs } from "@remix-run/node";
 import type { LoaderArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
-import { Form } from "@remix-run/react";
+import { Form, useActionData } from "@remix-run/react";
 import { createUserSession, getUserToken } from "~/server/session.server";
-import { signIn } from "~/server/auth.server";
+import { getUser, signIn } from "~/server/auth.server";
+import type { User } from "firebase/auth";
 
 export async function loader({ request }: LoaderArgs) {
   // if there's a user token in the cookies, the user is already signed in
   const userToken = await getUserToken(request);
 
-  if (userToken) return redirect("/");
+  const FBUser = await getUser();
+
+  if (userToken && FBUser) return redirect("/");
   return null;
 }
 
@@ -28,19 +31,35 @@ export async function action({ request }: ActionArgs) {
     });
   }
 
-  const user = await signIn(request, email.toString(), password.toString());
+  let user: User;
+
+  return await signIn(request, email.toString(), password.toString())
+    .then(async (res) => {
+      user = res.user;
+      return createUserSession({
+        request,
+        userToken: await user.getIdToken(),
+      });
+    })
+    .catch((err) => {
+      if (
+        err.code === "auth/user-not-found" ||
+        err.code === "auth/wrong-password"
+      ) {
+        return new Response("Invalid email or password", { status: 401 });
+      } else {
+        return new Response(err.message, { status: 500 });
+      }
+    });
 
   // If no user is returned, return the error
 
-  if (!user) return new Response("Invalid email or password", { status: 401 });
-
-  return createUserSession({
-    request,
-    userToken: await user.getIdToken(),
-  });
+  // if (!user) return new Response("Invalid email or password", { status: 401 });
 }
 
 export default function SignIn() {
+  const error = useActionData();
+
   return (
     <Form method="post">
       <label htmlFor="email">Email address</label>
@@ -59,6 +78,13 @@ export default function SignIn() {
         type="password"
         autoComplete="current-password"
       />
+
+      {error &&
+        (error.status != 401 ? (
+          <p style={{ color: "red" }}>{error}</p>
+        ) : (
+          <p>An unexpected error occured.</p>
+        ))}
 
       <button type="submit">Log in</button>
     </Form>
