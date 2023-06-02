@@ -16,6 +16,10 @@ export default function Index() {
       <Link to="/listings">Listings</Link>
       <br />
       <Link to="/admin">Admin</Link>
+      <br />
+      <Link to="/signin">Sign in</Link>
+      <br />
+      <Link to="/signout">Sign out</Link>
     </div>
   );
 }

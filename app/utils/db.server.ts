@@ -5,7 +5,7 @@ import {
   applicationDefault,
   initializeApp as initializeAdminApp,
 } from "firebase-admin/app";
-import { getAnalytics } from "firebase/analytics";
+// import { getAnalytics } from "firebase/analytics";
 require("dotenv").config();
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -37,10 +37,8 @@ if (!Firebase?.apps?.length) {
   Firebase = initializeApp(firebaseConfig);
 }
 
-const db = admin.firestore();
+export const db = admin.firestore();
 
 // Initialize Firebase
 // const app = initializeApp(firebaseConfig);
 // const analytics = getAnalytics(app);
-
-export { db };
