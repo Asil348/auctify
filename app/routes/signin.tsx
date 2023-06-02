@@ -1,13 +1,10 @@
 import type { ActionArgs } from "@remix-run/node";
+import type { LoaderArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import { Form } from "@remix-run/react";
-import {
-  createUserSession,
-  getUserToken,
-  signIn,
-} from "~/server/session.server";
+import { createUserSession, getUserToken } from "~/server/session.server";
+import { signIn } from "~/server/auth.server";
 
-import type { LoaderArgs } from "@remix-run/node";
 export async function loader({ request }: LoaderArgs) {
   // if there's a user token in the cookies, the user is already signed in
   const userToken = await getUserToken(request);
