@@ -7,6 +7,23 @@ import {
 import { db } from "./db.server";
 import { getSession } from "./session.server";
 import { redirect } from "@remix-run/node";
+import { sessionStorage } from "./session.server";
+
+export async function getUser() {
+  const { currentUser } = getAuth();
+
+  return currentUser;
+}
+
+export async function getUserFromDB() {
+  const user = await getUser();
+
+  if (!user) return null;
+
+  const userDoc = await db.collection("users").doc(user.uid).get();
+
+  return userDoc.data();
+};
 
 export async function logout(request: Request) {
   const session = await getSession(request);
