@@ -1,8 +1,16 @@
 import { Link, useLoaderData } from "@remix-run/react";
 import { getListings } from "~/server/listing.server";
+import { redirect } from "@remix-run/node";
 import type { LoaderArgs } from "@remix-run/node";
+import { isUserAdmin } from "~/server/auth.server";
 
-export async function loader(params: LoaderArgs) {
+export async function loader({ request, params }: LoaderArgs) {
+  const isAdmin = await isUserAdmin();
+
+  if (!isAdmin) {
+    return redirect("/signin");
+  }
+
   return await getListings();
 }
 

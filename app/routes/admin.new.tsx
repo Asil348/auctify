@@ -3,8 +3,19 @@ import { redirect } from "@remix-run/node";
 import { Form } from "@remix-run/react";
 import { createListing } from "~/server/listing.server";
 
-export async function action({ request }: ActionArgs) {
+import type { LoaderArgs } from "@remix-run/node";
+import { isUserAdmin } from "~/server/auth.server";
+export async function loader({ request, params }: LoaderArgs) {
+  const isAdmin = await isUserAdmin();
 
+  if (!isAdmin) {
+    return redirect("/signin");
+  }
+
+  return null;
+}
+
+export async function action({ request }: ActionArgs) {
   const formData = await request.formData();
 
   const title = formData.get("title");

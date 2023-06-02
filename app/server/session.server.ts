@@ -1,4 +1,5 @@
 import { createCookieSessionStorage, redirect } from "@remix-run/node";
+import { logout } from "./auth.server";
 
 export const sessionStorage = createCookieSessionStorage({
   cookie: {
@@ -40,4 +41,17 @@ export async function getUserToken(request: Request): Promise<any> {
   const session = await getSession(request);
   const userToken = session.get(USER_SESSION_KEY);
   return userToken;
+}
+
+export async function checkSessionValidity(request: Request) {
+  const userToken = await getUserToken(request);
+
+  if (userToken) {
+    return true;
+  } else {
+    // session expired or never even existed, log out of firebase
+    // TODO: doesn't work at the first time, fix it
+    logout(request);
+    redirect("/");
+  }
 }

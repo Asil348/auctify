@@ -23,7 +23,13 @@ export async function getUserFromDB() {
   const userDoc = await db.collection("users").doc(user.uid).get();
 
   return userDoc.data();
-};
+}
+
+export async function isUserAdmin() {
+  const DBUser = await getUserFromDB();
+
+  return DBUser?.admin;
+}
 
 export async function logout(request: Request) {
   const session = await getSession(request);

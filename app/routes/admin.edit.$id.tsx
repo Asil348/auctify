@@ -3,8 +3,15 @@ import { Form, Link, useLoaderData } from "@remix-run/react";
 import { useCallback, useEffect, useState } from "react";
 import { editListing, getListing } from "~/server/listing.server";
 import { redirect } from "@remix-run/node";
+import { isUserAdmin } from "~/server/auth.server";
 
 export async function loader({ request, params }: LoaderArgs) {
+  const isAdmin = await isUserAdmin();
+
+  if (!isAdmin) {
+    return redirect("/signin");
+  }
+
   const docID = params.id;
 
   //@ts-ignore

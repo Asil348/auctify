@@ -3,7 +3,14 @@ import { redirect } from "@remix-run/node";
 
 import type { LoaderArgs, ActionArgs } from "@remix-run/node";
 import { deleteListing } from "~/server/listing.server";
+import { isUserAdmin } from "~/server/auth.server";
 export async function loader({ request, params }: LoaderArgs) {
+  const isAdmin = await isUserAdmin();
+
+  if (!isAdmin) {
+    return redirect("/signin");
+  }
+
   return params.id;
 }
 
