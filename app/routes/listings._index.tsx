@@ -1,5 +1,5 @@
 import { Link, useLoaderData } from "@remix-run/react";
-import { getListings } from "~/lib/listing";
+import { getListings } from "~/server/listing.server";
 
 export let loader = ({ request }: any) => {
   return getListings();

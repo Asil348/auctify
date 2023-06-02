@@ -5,7 +5,7 @@ import {
   createUserSession,
   getUserToken,
   signUp,
-} from "~/utils/session.server";
+} from "~/server/session.server";
 
 import type { LoaderArgs } from "@remix-run/node";
 export async function loader({ request }: LoaderArgs) {

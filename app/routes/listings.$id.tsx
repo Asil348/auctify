@@ -1,5 +1,5 @@
 import { Link, useLoaderData } from "@remix-run/react";
-import { getListing } from "~/lib/listing";
+import { getListing } from "~/server/listing.server";
 import type { LoaderArgs } from "@remix-run/node";
 // import invariant from "tiny-invariant";
 

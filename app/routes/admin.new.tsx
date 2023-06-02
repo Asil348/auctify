@@ -1,7 +1,7 @@
 import type { ActionArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import { Form } from "@remix-run/react";
-import { createListing } from "~/lib/listing";
+import { createListing } from "~/server/listing.server";
 
 export async function action({ request }: ActionArgs) {
 

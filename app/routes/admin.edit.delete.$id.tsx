@@ -2,7 +2,7 @@ import { Form, Link, useLoaderData } from "@remix-run/react";
 import { redirect } from "@remix-run/node";
 
 import type { LoaderArgs, ActionArgs } from "@remix-run/node";
-import { deleteListing } from "~/lib/listing";
+import { deleteListing } from "~/server/listing.server";
 export async function loader({ request, params }: LoaderArgs) {
   return params.id;
 }

@@ -1,6 +1,6 @@
 // import type { LoaderArgs } from "@remix-run/node";
 import type { LoaderArgs } from "@remix-run/node";
-import { logout } from "~/utils/session.server";
+import { logout } from "~/server/session.server";
 
 export async function loader({ request }: LoaderArgs) {
   return logout(request);

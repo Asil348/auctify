@@ -1,4 +1,4 @@
-import { db } from "~/utils/db.server";
+import { db } from "~/server/db.server";
 
 interface IGetListing {
   request: any;

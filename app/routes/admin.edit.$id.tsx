@@ -1,7 +1,7 @@
 import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { Form, Link, useLoaderData } from "@remix-run/react";
 import { useCallback, useEffect, useState } from "react";
-import { editListing, getListing } from "~/lib/listing";
+import { editListing, getListing } from "~/server/listing.server";
 import { redirect } from "@remix-run/node";
 
 export async function loader({ request, params }: LoaderArgs) {
