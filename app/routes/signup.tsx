@@ -61,7 +61,7 @@ export default function SignUp() {
         autoComplete="current-password"
       />
 
-      <button type="submit">Log in</button>
+      <button type="submit">Sign up</button>
     </Form>
   );
 }
