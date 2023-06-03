@@ -1,6 +1,6 @@
 import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { Form, Link, useLoaderData } from "@remix-run/react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { editListing, getListing } from "~/server/listing.server";
 import { redirect } from "@remix-run/node";
 import { isUserAdmin } from "~/server/auth.server";
@@ -52,10 +52,6 @@ export async function action({ request }: ActionArgs) {
 
 export default function AdminEdit() {
   const listing = useLoaderData();
-
-  useEffect(() => {
-    console.log(listing);
-  }, []);
 
   const [title, setTitle] = useState(listing.title);
   const [slug, setSlug] = useState(listing.slug);
