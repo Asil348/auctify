@@ -1,38 +1,45 @@
 import { Link, useLoaderData } from "@remix-run/react";
 import { getListing } from "~/server/listing.server";
+import type { IListing } from "~/server/listing.server";
 import type { LoaderArgs } from "@remix-run/node";
+import { clientDB } from "../utils/firebase";
+import { doc, onSnapshot } from "firebase/firestore";
+import { useEffect, useState } from "react";
+
 // import invariant from "tiny-invariant";
 
 export let loader = async ({ params, request }: LoaderArgs) => {
   // invariant(params.slug, "expected params.slug");
 
-  // @ts-ignore
-  return getListing({ request, id: params.id });
+  if (!params.id) throw new Error("expected params.id");
+
+  const listing = await getListing({ request, id: params.id });
+
+  return { ...listing, id: params.id };
 };
 
-interface IListing {
-  currency: string;
-  currentBid: number;
-  description: string;
-  ended: boolean;
-  endsAt: string;
-  incrementPrice: number;
-  instantBuyPrice: number;
-  slug: string;
-  soldTo: string;
-  started: boolean;
-  startingPrice: number;
-  startsAt: string;
-  title: string;
-}
-
 export default function Listing() {
-  let listing = useLoaderData<IListing>();
+  let loaderListing = useLoaderData<IListing>();
+
+  const [listing, setListing] = useState(loaderListing);
+
+  useEffect(() => {
+    const unsub = onSnapshot(doc(clientDB, "listings", listing.id), (doc) => {
+      console.log("Current data: ", doc.data());
+      setListing({ ...listing, ...doc.data() });
+    });
+
+    return () => {
+      unsub();
+    };
+  }, []);
+
   return (
     <div>
       <h2>{listing.title}</h2>
+      <p>{listing.id}</p>
       <p>{listing.description}</p>
-      <p>{listing.startingPrice} {listing.currency}</p>
+      <p>{listing.openingBid} TRY</p>
       <Link to="../listings">Go back</Link>
     </div>
   );
