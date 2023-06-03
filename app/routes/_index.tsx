@@ -46,6 +46,8 @@ export default function Index() {
         <>
           <Link to="/signout">Sign out</Link>
           <br />
+          <Link to="/account">Account</Link>
+          <br />
         </>
       )}
     </div>

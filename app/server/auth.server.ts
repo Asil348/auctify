@@ -77,6 +77,10 @@ export async function signUp(
     uid: user.uid,
     email: user.email,
     admin: false,
+    fullname: "",
+    address: "",
+    phone: "",
+    orders: [],
   });
 
   return user;
