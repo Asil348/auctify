@@ -1,6 +1,6 @@
-import { db } from "~/server/db.server";
+import { adminDB } from "~/server/firebaseAdmin.server";
 
-interface IListing {
+export interface IListing {
   title: string;
   slug: string;
   description: string;
@@ -13,6 +13,7 @@ interface IListing {
   endsAt: Date;
   soldTo: null | string;
   soldAt: null | Date;
+  id: string;
 }
 
 interface IGetListing {
@@ -21,7 +22,7 @@ interface IGetListing {
 }
 
 export async function getListings() {
-  const querySnapshot = await db.collection("listings").get();
+  const querySnapshot = await adminDB.collection("listings").get();
 
   const data: any[] = [];
   querySnapshot.forEach((doc: any) => {
@@ -32,7 +33,7 @@ export async function getListings() {
 }
 
 export async function getListing({ request, id }: IGetListing) {
-  const docSnapshot = await db.collection("listings").doc(id).get();
+  const docSnapshot = await adminDB.collection("listings").doc(id).get();
 
   if (!docSnapshot.exists) {
     throw Error("No such document exists");
@@ -49,7 +50,7 @@ export async function createListing({
   request: any;
   listing: IListing;
 }) {
-  const res = await db.collection("listings").add(listing);
+  const res = await adminDB.collection("listings").add(listing);
 
   return getListing({ request, id: res.id });
 }
@@ -57,7 +58,7 @@ export async function createListing({
 export async function editListing({ request, listing }: any) {
   const { title, slug, description, price, id } = listing;
 
-  await db.collection("listings").doc(id).update({
+  await adminDB.collection("listings").doc(id).update({
     title,
     slug,
     description,
@@ -68,7 +69,15 @@ export async function editListing({ request, listing }: any) {
 }
 
 export async function deleteListing({ request, id }: any) {
-  await db.collection("listings").doc(id).delete();
+  await adminDB.collection("listings").doc(id).delete();
 
   return { id };
+}
+
+export async function listenToListing({ listingID }: any) {
+  const docRef = adminDB.collection("listings").doc(listingID);
+
+  docRef.onSnapshot((doc: any) => {
+    console.log("Current data: ", doc.data());
+  });
 }

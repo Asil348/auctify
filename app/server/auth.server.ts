@@ -4,7 +4,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
-import { db } from "./db.server";
+import { adminDB } from "./firebaseAdmin.server";
 import { getSession } from "./session.server";
 import { redirect } from "@remix-run/node";
 import { sessionStorage } from "./session.server";
@@ -20,7 +20,7 @@ export async function getUserFromDB() {
 
   if (!user) return null;
 
-  const userDoc = await db.collection("users").doc(user.uid).get();
+  const userDoc = await adminDB.collection("users").doc(user.uid).get();
 
   return userDoc.data();
 }
@@ -73,7 +73,7 @@ export async function signUp(
     password
   );
 
-  db.collection("users").doc(user.uid).set({
+  adminDB.collection("users").doc(user.uid).set({
     uid: user.uid,
     email: user.email,
     admin: false,
