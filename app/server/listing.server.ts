@@ -60,16 +60,9 @@ export async function createListing({
 }
 
 export async function editListing({ request, listing }: any) {
-  const { title, slug, description, price, id } = listing;
+  const res = adminDB.collection("listings").doc(listing.id).update(listing);
 
-  await adminDB.collection("listings").doc(id).update({
-    title,
-    slug,
-    description,
-    price,
-  });
-
-  return getListing({ request, id });
+  return getListing({ request, id: listing.id });
 }
 
 export async function deleteListing({ request, id }: any) {
