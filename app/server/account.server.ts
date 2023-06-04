@@ -19,7 +19,8 @@ export async function updateUserAccount(request: Request, data: any) {
 
   const userDoc = await adminDB.collection("users").doc(user.uid).update(data);
 
-  if (data.fullname) await getAuth().updateUser(user.uid, { displayName: data.fullname });
+  if (data.fullname)
+    await getAuth().updateUser(user.uid, { displayName: data.fullname });
 
   return userDoc;
 }
@@ -29,7 +30,7 @@ export async function updateUserPassword(request: Request, password: string) {
 
   if (!user) return null;
 
-  const userRecord = await getAuth().updateUser(user.uid, {
+  await getAuth().updateUser(user.uid, {
     password: password,
   });
 
