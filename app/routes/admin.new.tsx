@@ -44,6 +44,7 @@ export async function action({ request }: ActionArgs) {
     endsAt,
     soldTo,
     soldAt,
+    bids: []
   };
 
   console.log(listing);
