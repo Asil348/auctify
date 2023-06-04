@@ -1,5 +1,5 @@
 import type { ActionArgs, LoaderArgs } from "@remix-run/node";
-import { Form, Link, useLoaderData } from "@remix-run/react";
+import { Form, useLoaderData } from "@remix-run/react";
 import { useCallback, useState } from "react";
 import { editListing, getListing } from "~/server/listing.server";
 import { redirect } from "@remix-run/node";
@@ -23,16 +23,19 @@ export async function loader({ request, params }: LoaderArgs) {
   };
 }
 
-export async function action({ request }: ActionArgs) {
+export async function action({ request, params }: ActionArgs) {
   const formData = await request.formData();
 
-  // @ts-ignore
+  const id: any = params.id;
 
-  const id: FormDataEntryValue = formData.get("id");
   const title = formData.get("title");
   const slug = formData.get("slug");
   const description = formData.get("description");
-  const price = formData.get("price");
+  const currentBid = formData.get("currentBid");
+  const incrementBid = formData.get("incrementBid");
+  const instantBuyPrice = formData.get("instantBuyPrice");
+  const startsAt = formData.get("startsAt");
+  const endsAt = formData.get("endsAt");
 
   const previousListing = await getListing({ request, id: id.toString() });
 
@@ -41,13 +44,17 @@ export async function action({ request }: ActionArgs) {
     title,
     slug,
     description,
-    price,
+    currentBid,
+    incrementBid,
+    instantBuyPrice,
+    startsAt,
+    endsAt,
     id,
   };
 
   await editListing({ request, listing });
 
-  return redirect(`../`);
+  return redirect(`/admin`);
 }
 
 export default function AdminEdit() {
@@ -56,7 +63,13 @@ export default function AdminEdit() {
   const [title, setTitle] = useState(listing.title);
   const [slug, setSlug] = useState(listing.slug);
   const [description, setDescription] = useState(listing.description);
-  const [price, setPrice] = useState(listing.price);
+  const [currentBid, setCurrentBid] = useState(listing.currentBid);
+  const [incrementBid, setIncrementBid] = useState(listing.incrementBid);
+  const [instantBuyPrice, setInstantBuyPrice] = useState(
+    listing.instantBuyPrice
+  );
+  const [startsAt, setStartsAt] = useState(listing.startsAt);
+  const [endsAt, setEndsAt] = useState(listing.endsAt);
 
   // some people just can't...
   const handleChange = useCallback((e: any) => {
@@ -72,71 +85,147 @@ export default function AdminEdit() {
       case "description":
         setDescription(e.target.value);
         break;
-      case "price":
-        setPrice(e.target.value);
+      case "currentBid":
+        setCurrentBid(e.target.value);
+        break;
+      case "incrementBid":
+        setIncrementBid(e.target.value);
+        break;
+      case "instantBuyPrice":
+        setInstantBuyPrice(e.target.value);
+        break;
+      case "startsAt":
+        setStartsAt(e.target.value);
+        break;
+      case "endsAt":
+        setEndsAt(e.target.value);
         break;
     }
   }, []);
 
   return (
     <div>
-      <h1>Edit Listing</h1>
-      <div>
-        <Form method="POST">
-          <p>
-            <label>
-              ID
-              <input type="text" value={listing.id} readOnly name="id" />
-            </label>
-          </p>
-          <p>
-            <label>
-              Title
-              <input
-                type="text"
-                value={title}
-                onChange={handleChange}
-                name="title"
-              />
-            </label>
-          </p>
-          <p>
-            <label>
-              Slug
-              <input
-                type="text"
-                value={slug}
-                onChange={handleChange}
-                name="slug"
-              />
-            </label>
-          </p>
-          <p>
-            <label>
-              Description
-              <textarea
-                name="description"
-                value={description}
-                onChange={handleChange}
-              />
-            </label>
-          </p>
-          <p>
-            <label>
-              Price
-              <input
-                type="text"
-                name="price"
-                value={price}
-                onChange={handleChange}
-              />
-            </label>
-          </p>
-          <p>
-            <button type="submit">Edit</button>
-          </p>
-        </Form>
-        <Link to={`/admin/edit/delete/${listing.id}`}>delete</Link>
+      <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
+        <h1 className="text-3xl font-bold mb-6">Edit Listing</h1>
+        <div>
+          <Form method="POST" className="space-y-4">
+            <p>
+              <label className="block">
+                <span className="text-lg font-semibold">ID</span>
+                <input
+                  type="text"
+                  value={listing.id}
+                  disabled
+                  name="id"
+                  className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+                />
+              </label>
+            </p>
+            <p>
+              <label className="block">
+                <span className="text-lg font-semibold">Title</span>
+                <input
+                  type="text"
+                  value={title}
+                  onChange={handleChange}
+                  name="title"
+                  className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+                />
+              </label>
+            </p>
+            <p>
+              <label className="block">
+                <span className="text-lg font-semibold">Slug</span>
+                <input
+                  type="text"
+                  value={slug}
+                  onChange={handleChange}
+                  name="slug"
+                  className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+                />
+              </label>
+            </p>
+            <p>
+              <label className="block">
+                <span className="text-lg font-semibold">Description</span>
+                <textarea
+                  name="description"
+                  value={description}
+                  onChange={handleChange}
+                  className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+                ></textarea>
+              </label>
+            </p>
+            <p>
+              <label className="block">
+                <span className="text-lg font-semibold">Current Bid</span>
+                <input
+                  type="number"
+                  name="currentBid"
+                  value={currentBid}
+                  onChange={handleChange}
+                  className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+                />
+              </label>
+            </p>
+            <p>
+              <label className="block">
+                <span className="text-lg font-semibold">Increment Bid</span>
+                <input
+                  type="number"
+                  name="incrementBid"
+                  value={incrementBid}
+                  onChange={handleChange}
+                  className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+                />
+              </label>
+            </p>
+            <p>
+              <label className="block">
+                <span className="text-lg font-semibold">Instant Buy Price</span>
+                <input
+                  type="number"
+                  name="instantBuyPrice"
+                  value={instantBuyPrice}
+                  onChange={handleChange}
+                  className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+                />
+              </label>
+            </p>
+            <p>
+              <label className="block">
+                <span className="text-lg font-semibold">Starts At</span>
+                <input
+                  type="datetime-local"
+                  name="startsAt"
+                  value={startsAt}
+                  onChange={handleChange}
+                  className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+                />
+              </label>
+            </p>
+            <p>
+              <label className="block">
+                <span className="text-lg font-semibold">Ends At</span>
+                <input
+                  type="datetime-local"
+                  name="endsAt"
+                  value={endsAt}
+                  onChange={handleChange}
+                  className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+                />
+              </label>
+            </p>
+            <p>
+              <button
+                type="submit"
+                className="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded"
+              >
+                Edit
+              </button>
+            </p>
+          </Form>
+        </div>
       </div>
     </div>
   );
