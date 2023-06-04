@@ -6,7 +6,7 @@ import { Fragment, useState } from "react";
 
 const Navbar = ({ user, isAdmin }: any) => {
   const [navigation, setNavigation] = useState([
-    { name: "Home", href: "#", current: true },
+    { name: "Home", href: "/", current: false },
     { name: "Listings", href: "/listings", current: false },
   ]);
 

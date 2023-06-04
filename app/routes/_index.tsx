@@ -13,26 +13,14 @@ import Navbar from "~/components/Navbar";
 //   ];
 // };
 
-export async function loader({ request }: LoaderArgs) {
-  const user = await getUser();
-
-  const isAdmin = await isUserAdmin();
-
-  checkSessionValidity(request);
-
-  return { user, isAdmin };
-}
-
 export default function Index() {
-  const { user, isAdmin } = useLoaderData();
   return (
     <div>
-      <Navbar user={user} isAdmin={isAdmin} />
       {/* Welcome to auctify */}
       <div className="flex flex-col items-center justify-center min-h-screen py-2">
         <main className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">
           <h1 className="text-6xl font-bold">
-            Welcome to <Link to="/">auctify</Link>
+            Welcome to <Link to="/">Auctify</Link>
           </h1>
 
           <div className="flex flex-wrap items-center justify-around max-w-4xl mt-6 sm:w-full">
