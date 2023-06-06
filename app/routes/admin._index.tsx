@@ -62,6 +62,10 @@ export default function Admin() {
                         {listing.bids.length} bids
                       </p>
                     </>
+                  ) : new Date(listing.endsAt) < new Date() ? (
+                    <span className="font-medium text-right text-gray-900">
+                      Ended: {listing.openingBid} TRY
+                    </span>
                   ) : listing.bids.length > 0 ? (
                     <>
                       <p className="font-medium text-right text-gray-900">
@@ -84,10 +88,19 @@ export default function Admin() {
                     </div>
                     <p className="text-xs leading-5 text-gray-500">Sold</p>
                   </div>
-                ) : listing.bids.length > 0 ? (
+                ) : new Date(listing.endsAt) < new Date() ? (
                   <div className="mt-1 flex items-center gap-x-1.5">
                     <div className="flex-none rounded-full bg-amber-500/20 p-1">
                       <div className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+                    </div>
+                    <p className="text-xs leading-5 text-gray-500">
+                      Waiting confirmation
+                    </p>
+                  </div>
+                ) : listing.bids.length > 0 ? (
+                  <div className="mt-1 flex items-center gap-x-1.5">
+                    <div className="flex-none rounded-full bg-emerald-500/20 p-1">
+                      <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                     </div>
                     <p className="text-xs leading-5 text-gray-500">
                       In progress
