@@ -1,6 +1,8 @@
 import { Link, useLoaderData } from "@remix-run/react";
 import { getListings } from "~/server/listing.server";
 import { Timestamp } from "firebase/firestore";
+import Icon from "@mdi/react";
+import { mdiCubeOutline } from "@mdi/js";
 
 export let loader = ({ request }: any) => {
   return getListings();
@@ -21,13 +23,18 @@ export default function Listings() {
             {listings.map((listing: any) => (
               <div key={listing.id} className="group relative">
                 <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80">
-                  <img
-                    src={
-                      "https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-01.jpg"
-                    }
-                    alt={listing.title}
-                    className="h-full w-full object-cover object-center lg:h-full lg:w-full"
-                  />
+                  {listing.thumbnail ? (
+                    <img
+                      src={listing.thumbnail}
+                      alt={listing.title}
+                      className="h-full w-full object-cover object-center lg:h-full lg:w-full"
+                    />
+                  ) : (
+                    <Icon
+                      className="m-auto h-full w-12 flex-none text-gray-300 object-cover object-center"
+                      path={mdiCubeOutline}
+                    />
+                  )}
                 </div>
                 <div className="mt-4 flex justify-between">
                   <div>

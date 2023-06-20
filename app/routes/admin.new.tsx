@@ -1,7 +1,12 @@
 import type { ActionArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import { Form } from "@remix-run/react";
-import { createListing, uploadListingMedia } from "~/server/listing.server";
+import {
+  createListing,
+  editListing,
+  getFirstNListingMedia,
+  uploadListingMedia,
+} from "~/server/listing.server";
 
 import type { LoaderArgs } from "@remix-run/node";
 import { isUserAdmin } from "~/server/auth.server";
@@ -44,18 +49,28 @@ export async function action({ request }: ActionArgs) {
     endsAt,
     soldTo,
     soldAt,
+    thumbnail: "",
     bids: [],
   };
 
   // !! fix this typing !! //
   // @ts-ignore
-  await createListing({ request, listing }).then((listingID: any) => {
+  await createListing({ request, listing }).then(async (listingID: any) => {
     for (let blob of mediaFiles) {
-      uploadListingMedia({
+      await uploadListingMedia({
         listingID,
         blob,
       });
     }
+
+    const thumbnail = await getFirstNListingMedia(listingID, 1);
+
+    console.log(thumbnail);
+
+    await editListing({
+      request,
+      listing: { id: listingID, thumbnail: thumbnail[0] },
+    });
   });
 
   return redirect(`/admin`);

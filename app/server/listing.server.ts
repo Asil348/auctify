@@ -6,6 +6,7 @@ import {
   getStorage,
   ref,
   uploadBytes,
+  list,
   listAll,
   getDownloadURL,
 } from "firebase/storage";
@@ -28,7 +29,6 @@ export interface IListing {
 }
 
 interface IGetListing {
-  request: any;
   id: string;
 }
 
@@ -43,7 +43,7 @@ export async function getListings() {
   return data;
 }
 
-export async function getListing({ request, id }: IGetListing) {
+export async function getListing({ id }: IGetListing) {
   const docSnapshot = await adminDB.collection("listings").doc(id).get();
 
   if (!docSnapshot.exists) {
@@ -88,17 +88,37 @@ export async function getListingMedia(listingID: any) {
   }
 
   for (const item of itemRefs) {
-    const url = await getDownloadURL(ref(storage, `listings/${listingID}/${item.name}`));
+    const url = await getDownloadURL(
+      ref(storage, `listings/${listingID}/${item.name}`)
+    );
     urls.push(url);
   }
 
   return urls;
 }
 
-export async function editListing({ request, listing }: any) {
+export async function getFirstNListingMedia(listingID: any, n: number) {
+  const storage = getStorage();
+  const storageRef = ref(storage, `listings/${listingID}`);
+
+  const page = await list(storageRef, { maxResults: n });
+
+  let urls: any[] = [];
+
+  for (const item of page.items) {
+    const url = await getDownloadURL(
+      ref(storage, `listings/${listingID}/${item.name}`)
+    );
+    urls.push(url);
+  }
+
+  return urls;
+}
+
+export async function editListing({ listing }: any) {
   await adminDB.collection("listings").doc(listing.id).update(listing);
 
-  return getListing({ request, id: listing.id });
+  return getListing({ id: listing.id });
 }
 
 export async function deleteListing({ request, id }: any) {
