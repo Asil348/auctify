@@ -37,7 +37,7 @@ export async function action({ request, params }: ActionArgs) {
   const startsAt = formData.get("startsAt");
   const endsAt = formData.get("endsAt");
 
-  const previousListing = await getListing({ request, id: id.toString() });
+  const previousListing = await getListing({ id: id.toString() });
 
   const listing = {
     ...previousListing,
