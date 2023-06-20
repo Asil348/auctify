@@ -1,5 +1,9 @@
 import { Form, useActionData, useLoaderData } from "@remix-run/react";
-import { bidOnListing, getListing } from "~/server/listing.server";
+import {
+  bidOnListing,
+  getListing,
+  getListingMedia,
+} from "~/server/listing.server";
 import type { IListing } from "~/server/listing.server";
 import type { LoaderArgs, ActionArgs } from "@remix-run/node";
 import { clientDB } from "../utils/firebase";
@@ -29,7 +33,9 @@ export let loader = async ({ params, request }: LoaderArgs) => {
 
   const listing = await getListing({ request, id: params.id });
 
-  return { ...listing, id: params.id };
+  const media = await getListingMedia(params.id);
+
+  return { ...listing, id: params.id, media };
 };
 
 export default function Listing() {
@@ -41,6 +47,7 @@ export default function Listing() {
   const [startsAt, setStartsAt] = useState(new Date(listing.startsAt));
   const [endsAt, setEndsAt] = useState(new Date(listing.endsAt));
   const [isListingExpired, setIsListingExpired] = useState(false);
+  const [listingMedia, setListingMedia] = useState(loaderListing.media);
 
   const handleExpire = useCallback((docData: any) => {
     const startsAt = new Date(docData.startsAt);
@@ -152,26 +159,14 @@ export default function Listing() {
             </dl>
           </div>
           <div className="grid grid-cols-2 grid-rows-2 gap-4 sm:gap-6 lg:gap-8">
-            <img
-              src="https://tailwindui.com/img/ecommerce-images/product-feature-03-detail-01.jpg"
-              alt="Walnut card tray with white powder coated steel divider and 3 punchout holes."
-              className="rounded-lg bg-gray-100"
-            />
-            <img
-              src="https://tailwindui.com/img/ecommerce-images/product-feature-03-detail-02.jpg"
-              alt="Top down view of walnut card tray with embedded magnets and card groove."
-              className="rounded-lg bg-gray-100"
-            />
-            <img
-              src="https://tailwindui.com/img/ecommerce-images/product-feature-03-detail-03.jpg"
-              alt="Side of walnut card tray with card groove and recessed card area."
-              className="rounded-lg bg-gray-100"
-            />
-            <img
-              src="https://tailwindui.com/img/ecommerce-images/product-feature-03-detail-04.jpg"
-              alt="Walnut card tray filled with cards and card angled in dedicated groove."
-              className="rounded-lg bg-gray-100"
-            />
+            {listingMedia?.map((media: any) => (
+              <img
+                key={media}
+                src={media}
+                alt="media"
+                className="rounded-lg bg-gray-100"
+              />
+            ))}
           </div>
         </div>
       </div>
