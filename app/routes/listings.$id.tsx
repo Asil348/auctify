@@ -31,7 +31,7 @@ export let loader = async ({ params, request }: LoaderArgs) => {
 
   if (!params.id) throw new Error("expected params.id");
 
-  const listing = await getListing({ request, id: params.id });
+  const listing = await getListing({ id: params.id });
 
   const media = await getListingMedia(params.id);
 
@@ -164,7 +164,7 @@ export default function Listing() {
                 key={media}
                 src={media}
                 alt="media"
-                className="rounded-lg bg-gray-100"
+                className="rounded-lg h-full object-cover bg-gray-100"
               />
             ))}
           </div>
