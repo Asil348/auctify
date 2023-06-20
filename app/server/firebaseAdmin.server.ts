@@ -9,7 +9,7 @@ require("dotenv").config();
 if (!admin.apps.length) {
   initializeAdminApp({
     credential: applicationDefault(),
-    databaseURL: "https://auction-site-ad94e.firebaseio.com",
+    databaseURL: process.env.FIREBASE_DATABASE_URL,
   });
 }
 
