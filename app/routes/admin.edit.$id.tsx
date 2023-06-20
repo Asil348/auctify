@@ -1,5 +1,5 @@
 import type { ActionArgs, LoaderArgs } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
+import { Form, Link, useLoaderData } from "@remix-run/react";
 import { useCallback, useState } from "react";
 import { editListing, getListing } from "~/server/listing.server";
 import { redirect } from "@remix-run/node";
@@ -223,6 +223,13 @@ export default function AdminEdit() {
               >
                 Edit
               </button>
+            </p>
+            <p>
+              <Link to={`/admin/edit/delete/${listing.id}`}>
+                <button className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded">
+                  Delete
+                </button>
+              </Link>
             </p>
           </Form>
         </div>
