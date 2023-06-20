@@ -1,7 +1,7 @@
 import type { ActionArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import { Form } from "@remix-run/react";
-import { createListing } from "~/server/listing.server";
+import { createListing, uploadListingMedia } from "~/server/listing.server";
 
 import type { LoaderArgs } from "@remix-run/node";
 import { isUserAdmin } from "~/server/auth.server";
@@ -25,11 +25,12 @@ export async function action({ request }: ActionArgs) {
   const currentBid = formData.get("currentBid");
   const incrementBid = formData.get("incrementBid");
   const instantBuyPrice = formData.get("instantBuyPrice");
-  const media = formData.get("media");
   const startsAt = formData.get("startsAt");
   const endsAt = formData.get("endsAt");
   const soldTo = formData.get("soldTo");
   const soldAt = formData.get("soldAt");
+
+  const mediaFiles = formData.getAll("media");
 
   const listing = {
     title,
@@ -39,103 +40,169 @@ export async function action({ request }: ActionArgs) {
     currentBid,
     incrementBid,
     instantBuyPrice,
-    media,
     startsAt,
     endsAt,
     soldTo,
     soldAt,
-    bids: []
+    bids: [],
   };
-
-  console.log(listing);
 
   // !! fix this typing !! //
   // @ts-ignore
-  await createListing({ request, listing });
+  await createListing({ request, listing }).then((listingID: any) => {
+    for (let blob of mediaFiles) {
+      uploadListingMedia({
+        listingID,
+        blob,
+      });
+    }
+  });
 
   return redirect(`/admin`);
 }
 
 export default function AdminNew() {
   return (
-    <div>
-      <Form method="POST">
-        <p>
-          <label>
-            Title
-            <input type="text" name="title" />
-          </label>
-        </p>
-        <p>
-          <label>
-            Slug
-            <input type="text" name="slug" />
-          </label>
-        </p>
-        <p>
-          <label>
-            Description
-            <textarea name="description" />
-          </label>
-        </p>
-        <p>
-          <label>
-            Opening Bid
-            <input type="number" name="openingBid" />
-          </label>
-        </p>
-        <p>
-          <label>
-            Current Bid
-            <input type="number" name="currentBid" disabled readOnly/>
-          </label>
-        </p>
-        <p>
-          <label>
-            Increment Bid
-            <input type="number" name="incrementBid" />
-          </label>
-        </p>
-        <p>
-          <label>
-            Instant Buy Price
-            <input type="number" name="instantBuyPrice" />
-          </label>
-        </p>
-        <p>
-          <label>
-            Media
-            <input type="text" name="media" />
-          </label>
-        </p>
-        <p>
-          <label>
-            Starts At
-            <input type="datetime-local" name="startsAt" />
-          </label>
-        </p>
-        <p>
-          <label>
-            Ends At
-            <input type="datetime-local" name="endsAt" />
-          </label>
-        </p>
-        <p>
-          <label>
-            Sold To
-            <input type="text" name="soldTo" disabled readOnly />
-          </label>
-        </p>
-        <p>
-          <label>
-            Sold At
-            <input type="datetime-local" name="soldAt" disabled readOnly />
-          </label>
-        </p>
-        <p>
-          <button type="submit">Create</button>
-        </p>
-      </Form>
-    </div>
+    <>
+      <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
+        <h1 className="text-3xl font-bold mb-6">New Listing</h1>
+        <div>
+          <Form
+            method="POST"
+            encType="multipart/form-data"
+            className="space-y-4"
+          >
+            <p>
+              <label className="block">
+                <span className="text-lg font-semibold">Title</span>
+                <input
+                  type="text"
+                  name="title"
+                  className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+                />
+              </label>
+            </p>
+            <p>
+              <label className="block">
+                <span className="text-lg font-semibold">Slug</span>
+                <input
+                  type="text"
+                  name="slug"
+                  className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+                />
+              </label>
+            </p>
+            <p>
+              <label className="block">
+                <span className="text-lg font-semibold">Description</span>
+                <textarea
+                  name="description"
+                  className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+                ></textarea>
+              </label>
+            </p>
+            <p>
+              <label className="block">
+                <span className="text-lg font-semibold">Opening Bid</span>
+                <input
+                  type="number"
+                  name="openingBid"
+                  className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+                />
+              </label>
+            </p>
+            <p className="hidden">
+              <label className="block">
+                <span className="text-lg font-semibold">Current Bid</span>
+                <input
+                  type="number"
+                  name="currentBid"
+                  className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+                />
+              </label>
+            </p>
+            <p>
+              <label className="block">
+                <span className="text-lg font-semibold">Increment Bid</span>
+                <input
+                  type="number"
+                  name="incrementBid"
+                  className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+                />
+              </label>
+            </p>
+            <p>
+              <label className="block">
+                <span className="text-lg font-semibold">Instant Buy Price</span>
+                <input
+                  type="number"
+                  name="instantBuyPrice"
+                  className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+                />
+              </label>
+            </p>
+            <p>
+              <label className="block">
+                <span className="text-lg font-semibold">Starts At</span>
+                <input
+                  type="datetime-local"
+                  name="startsAt"
+                  className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+                />
+              </label>
+            </p>
+            <p>
+              <label className="block">
+                <span className="text-lg font-semibold">Ends At</span>
+                <input
+                  type="datetime-local"
+                  name="endsAt"
+                  className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+                />
+              </label>
+            </p>
+            <p className="hidden">
+              <label className="block">
+                <span className="text-lg font-semibold">Sold At</span>
+                <input
+                  type="datetime-local"
+                  name="soldAt"
+                  className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+                />
+              </label>
+            </p>
+            <p className="hidden">
+              <label className="block">
+                <span className="text-lg font-semibold">Sold To</span>
+                <input
+                  type="text"
+                  name="soldTo"
+                  className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+                />
+              </label>
+            </p>
+            <p>
+              <label className="block">
+                <span className="text-lg font-semibold">Media</span>
+                <input
+                  type="file"
+                  name="media"
+                  multiple
+                  className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+                />
+              </label>
+            </p>
+            <p>
+              <button
+                type="submit"
+                className="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded"
+              >
+                Create
+              </button>
+            </p>
+          </Form>
+        </div>
+      </div>
+    </>
   );
 }

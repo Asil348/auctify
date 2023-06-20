@@ -2,6 +2,7 @@ import { adminDB } from "~/server/firebaseAdmin.server";
 import { getUser } from "./auth.server";
 import { getUserAccount } from "./account.server";
 import { FieldValue } from "firebase-admin/firestore";
+import { getStorage, ref, uploadBytes } from "firebase/storage";
 
 export interface IListing {
   title: string;
@@ -56,7 +57,16 @@ export async function createListing({
 }) {
   const res = await adminDB.collection("listings").add(listing);
 
-  return getListing({ request, id: res.id });
+  return res.id;
+}
+
+export async function uploadListingMedia({ listingID, blob }: any) {
+  const storage = getStorage();
+  const stream = await blob.arrayBuffer()
+  const storageRef = ref(storage, `listings/${listingID}/${blob.name}`);
+  await uploadBytes(storageRef, stream, { contentType: blob.type });
+
+  return blob.name;
 }
 
 export async function editListing({ request, listing }: any) {
