@@ -26,21 +26,51 @@ export default function Account() {
   }, []);
 
   return (
-    <div>
-      <h1>Account</h1>
-      <p>
-        <strong>First Name:</strong> {userAccount.fullname ? userAccount.fullname : "(empty)"}
-      </p>
-      <p>
-        <strong>Email:</strong> {userAccount.email ? userAccount.email : "(empty)"}
-      </p>
-      <p>
-        <strong>Phone:</strong> {userAccount.phone ? userAccount.phone : "(empty)"}
-      </p>
-      <p>
-        <strong>Address:</strong> {userAccount.address ? userAccount.address : "(empty)"}
-      </p>
-      <Link to="/account/edit">Change account details</Link>
+    <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
+      <h1 className="text-3xl font-bold mb-6">Account</h1>
+      <div>
+        <div className="space-y-4">
+          <p>
+            <label className="block">
+              <span className="text-lg font-semibold">First Name</span>
+              <p className="mt-1 rounded-md w-full">
+                {userAccount.fullname ? userAccount.fullname : "(empty)"}
+              </p>
+            </label>
+          </p>
+          <p>
+            <label className="block">
+              <span className="text-lg font-semibold">Email</span>
+              <p className="mt-1 rounded-md w-full">
+                {userAccount.email ? userAccount.email : "(empty)"}
+              </p>
+            </label>
+          </p>
+          <p>
+            <label className="block">
+              <span className="text-lg font-semibold">Phone</span>
+              <p className="mt-1 rounded-md w-full">
+                {userAccount.phone ? userAccount.phone : "(empty)"}
+              </p>
+            </label>
+          </p>
+          <p>
+            <label className="block">
+              <span className="text-lg font-semibold">Address</span>
+              <p className="mt-1 rounded-md w-full">
+                {userAccount.address ? userAccount.address : "(empty)"}
+              </p>
+            </label>
+          </p>
+          <p>
+            <Link to={`/account/edit`}>
+              <button className="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded">
+                Edit
+              </button>
+            </Link>
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

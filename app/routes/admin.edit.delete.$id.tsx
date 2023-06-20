@@ -29,13 +29,29 @@ export default function AdminDelete() {
   const id = useLoaderData();
 
   return (
-    <div>
-      Are you sure? 🤔
-      <Form method="POST">
+    <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
+      <h1 className="text-3xl font-bold mb-6">Are you sure?</h1>
+      <Form method="POST" className="space-y-4">
         <input type="hidden" name="id" value={id} />
-        <button type="submit">Delete</button>
+        <p>
+          <button
+            type="submit"
+            className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded"
+          >
+            Delete
+          </button>
+        </p>
+        <p>
+          <Link to="/admin">
+            <button
+              type="submit"
+              className="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded"
+            >
+              Cancel
+            </button>
+          </Link>
+        </p>
       </Form>
-      <Link to="/admin">Cancel</Link>
     </div>
   );
 }
