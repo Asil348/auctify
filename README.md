@@ -3,6 +3,7 @@ Auctify is an auction website. Admins can create auctions and users can bid on t
 
 ## Setup
 Place your `serviceAccountKey.json` file you acquired from your Firebase panel in the root directory of the project. You can edit your .env file accordingly.
+Fill the `firebaseConfig.json` with your Firebase config. Change the `FIREBASE_DATABASE_URL` to your database URL. You can find it in your Firebase panel.
 
 The `SESSION_SECRET` is used to sign the session ID cookie. You can use any string you want.
 
