@@ -62,7 +62,7 @@ export async function createListing({
 
 export async function uploadListingMedia({ listingID, blob }: any) {
   const storage = getStorage();
-  const stream = await blob.arrayBuffer()
+  const stream = await blob.arrayBuffer();
   const storageRef = ref(storage, `listings/${listingID}/${blob.name}`);
   await uploadBytes(storageRef, stream, { contentType: blob.type });
 
@@ -70,7 +70,7 @@ export async function uploadListingMedia({ listingID, blob }: any) {
 }
 
 export async function editListing({ request, listing }: any) {
-  const res = adminDB.collection("listings").doc(listing.id).update(listing);
+  await adminDB.collection("listings").doc(listing.id).update(listing);
 
   return getListing({ request, id: listing.id });
 }
@@ -132,6 +132,7 @@ export async function bidOnListing({ request, listingID, bid }: any) {
     if (!listing.currentBid && bid >= listing.openingBid) {
       if (
         bid > listing.openingBid &&
+        // @ts-ignore
         bid - parseInt(listing.openingBid) < parseInt(listing.incrementBid)
       )
         return new Response(
@@ -153,7 +154,9 @@ export async function bidOnListing({ request, listingID, bid }: any) {
     if (listing.currentBid >= bid || listing.openingBid > bid) {
       return new Response("Bid must be greater than current bid");
     } else if (
+      // @ts-ignore
       parseInt(bid) - parseInt(listing.currentBid) <
+      // @ts-ignore
       parseInt(listing.incrementBid)
     ) {
       return new Response("Your bid must be greater than the increment bid.", {
